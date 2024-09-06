@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useTabSwitchProctoring } from '@/hooks/useTabSwitchProctoring'
 import { useFullScreenProctoring } from '@/hooks/useFullScreenProctoring'
 import { useWindowResizeProctoring } from '@/hooks/useWindowResizeProctoring'
+import { useClipboardProctoring } from '@/hooks/useClipboardProctoring'
 
 const Test = () => {
     const [timer, setTimer] = useState(300);
@@ -44,6 +45,10 @@ const Test = () => {
             alert(`Window resized to ${width}x${height}. This may be considered cheating.`);
         },
     });
+
+    // Clipboard Proctoring
+    const { isDisabled } = useClipboardProctoring();
+
     useEffect(() => {
         const interval = setInterval(() => {
             setTimer(prevTimer => prevTimer - 1);
@@ -63,6 +68,7 @@ const Test = () => {
             }
             <p>Tab Changes: {tabChanges}</p>
             <h1 className='text-4xl'>{timer}</h1>
+            <input type="text" className='border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
 
             {/* Warning Modal  */}
             {showWarning && (
