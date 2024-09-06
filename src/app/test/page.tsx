@@ -3,17 +3,16 @@
 import React, { useEffect, useState } from 'react'
 import { useTabSwitchProctoring } from '@/hooks/useTabSwitchProctoring'
 import { useFullScreenProctoring } from '@/hooks/useFullScreenProctoring'
+import { useWindowResizeProctoring } from '@/hooks/useWindowResizeProctoring'
 
 const Test = () => {
     const [timer, setTimer] = useState(300);
 
     // Tab Change Proctoring
     const onExit = () => {
-        // Redirect to the home page
-        alert("You are being exited from the test. Redirecting");
         setTimeout(() => {
             window.location.href = '/';
-        }, 3000);
+        }, 1000);
 
         // Add a blur effect to the screen
         document.body.style.filter = 'blur(5px)';
@@ -34,6 +33,18 @@ const Test = () => {
     };
 
     useEffect(() => {
+        if (!isFullScreen) {
+            requestFullScreen();
+        }
+    }, [requestFullScreen]);
+
+    // Window Resize Proctoring
+    const { isResized } = useWindowResizeProctoring({
+        onResize: (width, height) => {
+            alert(`Window resized to ${width}x${height}. This may be considered cheating.`);
+        },
+    });
+    useEffect(() => {
         const interval = setInterval(() => {
             setTimer(prevTimer => prevTimer - 1);
         }, 1000);
@@ -41,11 +52,6 @@ const Test = () => {
         return () => clearInterval(interval);
     }, []);
 
-    useEffect(() => {
-        if (!isFullScreen) {
-            requestFullScreen();
-        }
-    }, [requestFullScreen]);
 
     return (
         <div className='flex flex-col my-10 items-center h-screen gap-2'>
