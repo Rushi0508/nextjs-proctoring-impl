@@ -1,13 +1,12 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { useTabSwitchProctoring } from '@/hooks/useTabSwitchProctoring'
 
 const Test = () => {
-    const [warningShown, setWarningShown] = useState(false);
-    const [tabChanges, setTabChanges] = useState(0);
     const [timer, setTimer] = useState(300);
 
-    const onTestExit = () => {
+    const onExit = () => {
         // Redirect to the home page
         alert("You are being exited from the test. Redirecting");
         setTimeout(() => {
@@ -19,23 +18,11 @@ const Test = () => {
         document.body.style.pointerEvents = 'none';
     }
 
-    useEffect(() => {
-        const handleVisibilityChange = () => {
-            if (!document.hidden && !warningShown) {
-                setTabChanges(prevTabChanges => prevTabChanges + 1);
-                alert("Warning: The next tab change will exit the test.");
-                setWarningShown(true);
-            } else if (document.hidden && warningShown) {
-                onTestExit();
-            }
-        };
+    const onWarning = () => {
+        alert("Warning: The next tab change will exit the test.");
+    }
 
-        document.addEventListener("visibilitychange", handleVisibilityChange);
-
-        return () => {
-            document.removeEventListener("visibilitychange", handleVisibilityChange);
-        };
-    }, [warningShown]);
+    const { warningShown, tabChanges } = useTabSwitchProctoring({ onWarning, onExit });
 
     useEffect(() => {
         const interval = setInterval(() => {
