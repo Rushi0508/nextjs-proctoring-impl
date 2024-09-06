@@ -6,6 +6,7 @@ import { useFullScreenProctoring } from '@/hooks/useFullScreenProctoring'
 import { useWindowResizeProctoring } from '@/hooks/useWindowResizeProctoring'
 import { useClipboardProctoring } from '@/hooks/useClipboardProctoring'
 import { useRightClickProctoring } from '@/hooks/useRightClickProctoring'
+import { useExternalScreenProctoring } from '@/hooks/useExternalScreenProctoring'
 
 const Test = () => {
     const [timer, setTimer] = useState(300);
@@ -41,7 +42,7 @@ const Test = () => {
     }, [requestFullScreen, isFullScreen]);
 
     // Window Resize Proctoring
-    const { isResized } = useWindowResizeProctoring({
+    useWindowResizeProctoring({
         onResize: (width, height) => {
             alert(`Window resized to ${width}x${height}. This may be considered cheating.`);
         },
@@ -52,6 +53,9 @@ const Test = () => {
 
     // Right Click Proctoring
     useRightClickProctoring();
+
+    // External Screen Proctoring
+    useExternalScreenProctoring();
 
     useEffect(() => {
         const interval = setInterval(() => {
