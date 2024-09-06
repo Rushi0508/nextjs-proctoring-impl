@@ -5,6 +5,7 @@ import { useTabSwitchProctoring } from '@/hooks/useTabSwitchProctoring'
 import { useFullScreenProctoring } from '@/hooks/useFullScreenProctoring'
 import { useWindowResizeProctoring } from '@/hooks/useWindowResizeProctoring'
 import { useClipboardProctoring } from '@/hooks/useClipboardProctoring'
+import { useRightClickProctoring } from '@/hooks/useRightClickProctoring'
 
 const Test = () => {
     const [timer, setTimer] = useState(300);
@@ -37,7 +38,7 @@ const Test = () => {
         if (!isFullScreen) {
             requestFullScreen();
         }
-    }, [requestFullScreen]);
+    }, [requestFullScreen, isFullScreen]);
 
     // Window Resize Proctoring
     const { isResized } = useWindowResizeProctoring({
@@ -47,7 +48,10 @@ const Test = () => {
     });
 
     // Clipboard Proctoring
-    const { isDisabled } = useClipboardProctoring();
+    useClipboardProctoring();
+
+    // Right Click Proctoring
+    useRightClickProctoring();
 
     useEffect(() => {
         const interval = setInterval(() => {
