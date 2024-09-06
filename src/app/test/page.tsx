@@ -16,10 +16,6 @@ const Test = () => {
         setTimeout(() => {
             window.location.href = '/';
         }, 1000);
-
-        // Add a blur effect to the screen
-        document.body.style.filter = 'blur(5px)';
-        document.body.style.pointerEvents = 'none';
     }
 
     const onWarning = () => {
@@ -79,7 +75,7 @@ const Test = () => {
             <input type="text" className='border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
 
             {/* Warning Modal  */}
-            {showWarning && (
+            {!isFullScreen && showWarning && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
                         <h2 className="text-2xl font-bold mb-4">Warning</h2>
