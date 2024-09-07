@@ -1,13 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 
 export const useFullScreenProctoring = () => {
-    const [isFullScreen, setIsFullScreen] = useState(false);
-    const [showWarning, setShowWarning] = useState(false);
+    const [isFullScreen, setIsFullScreen] = useState(true);
+    const [isTransitioning, setIsTransitioning] = useState(true);
 
     const handleFullScreenChange = useCallback(() => {
-        setIsFullScreen(!!document.fullscreenElement);
-        if (!document.fullscreenElement) {
-            setShowWarning(true);
+        const fullScreenStatus = !!document.fullscreenElement;
+        setIsFullScreen(fullScreenStatus);
+
+        if (!fullScreenStatus) {
+            setIsTransitioning(true);
+            setTimeout(() => setIsTransitioning(false), 1000); // 1 second delay
+        } else {
+            setIsTransitioning(false);
         }
     }, []);
 
@@ -15,7 +20,8 @@ export const useFullScreenProctoring = () => {
         if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen().catch(err => {
                 console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-                setShowWarning(true);
+                setIsFullScreen(false);
+                setIsTransitioning(false);
             });
         }
     }, []);
@@ -24,14 +30,12 @@ export const useFullScreenProctoring = () => {
         document.addEventListener('fullscreenchange', handleFullScreenChange);
 
         // Check full-screen status on mount
-        if (!document.fullscreenElement) {
-            setShowWarning(true);
-        }
+        handleFullScreenChange();
 
         return () => {
             document.removeEventListener('fullscreenchange', handleFullScreenChange);
         };
     }, [handleFullScreenChange]);
 
-    return { isFullScreen, requestFullScreen, showWarning, setShowWarning };
+    return { isFullScreen, isTransitioning, requestFullScreen };
 };

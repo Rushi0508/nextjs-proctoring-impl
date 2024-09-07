@@ -1,28 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 
 interface TabSwitchProctoringOptions {
-    onWarning?: () => void;
-    onExit?: () => void;
-    exitOnSecondSwitch?: boolean;
 }
 
-export const useTabSwitchProctoring = ({
-    onWarning = () => alert("Warning: The next tab change will exit the test."),
-    onExit = () => window.location.href = '/',
-    exitOnSecondSwitch = true
-}: TabSwitchProctoringOptions = {}) => {
-    const [warningShown, setWarningShown] = useState(false);
+export const useTabSwitchProctoring = () => {
     const [tabChanges, setTabChanges] = useState(0);
 
     const handleVisibilityChange = useCallback(() => {
-        if (!document.hidden && !warningShown) {
-            onWarning();
+        if (!document.hidden) {
             setTabChanges(prevTabChanges => prevTabChanges + 1);
-            setWarningShown(true);
-        } else if (document.hidden && warningShown && exitOnSecondSwitch && tabChanges === 1) {
-            onExit();
         }
-    }, [warningShown, onWarning, onExit, exitOnSecondSwitch, tabChanges]);
+    }, [tabChanges]);
 
     useEffect(() => {
         document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -31,5 +19,5 @@ export const useTabSwitchProctoring = ({
         };
     }, [handleVisibilityChange]);
 
-    return { warningShown, tabChanges };
+    return { tabChanges };
 };

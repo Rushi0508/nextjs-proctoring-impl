@@ -1,12 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 
 interface WindowResizeOptions {
-    onResize?: (width: number, height: number) => void;
     threshold?: number;
 }
 
 export const useWindowResizeProctoring = ({
-    onResize = () => { },
     threshold = 100, // pixels
 }: WindowResizeOptions = {}) => {
     const [initialSize, _] = useState({
@@ -26,14 +24,13 @@ export const useWindowResizeProctoring = ({
         if (widthDiff > threshold || heightDiff > threshold) {
             if (!isResized) {
                 setIsResized(true);
-                onResize(newWidth, newHeight);
             }
         } else {
             setIsResized(false);
         }
 
         setCurrentSize({ width: newWidth, height: newHeight });
-    }, [initialSize, threshold, onResize, isResized]);
+    }, [initialSize, threshold, isResized]);
 
     useEffect(() => {
         window.addEventListener('resize', handleResize);

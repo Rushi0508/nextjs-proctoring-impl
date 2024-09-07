@@ -12,22 +12,15 @@ const Test = () => {
     const [timer, setTimer] = useState(300);
 
     // Tab Change Proctoring
-    const onExit = () => {
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 1000);
+    const { tabChanges } = useTabSwitchProctoring();
+    if (tabChanges > 2) {
+        window.location.href = '/';
     }
-
-    const onWarning = () => {
-        alert("Warning: The next tab change will exit the test.");
-    }
-    const { warningShown, tabChanges } = useTabSwitchProctoring({ onWarning, onExit });
 
     // Full Screen Proctoring
-    const { isFullScreen, requestFullScreen, showWarning, setShowWarning } = useFullScreenProctoring();
+    const { isFullScreen, requestFullScreen } = useFullScreenProctoring();
 
     const handleContinue = () => {
-        setShowWarning(false);
         requestFullScreen();
     };
 
@@ -38,11 +31,10 @@ const Test = () => {
     }, [requestFullScreen, isFullScreen]);
 
     // Window Resize Proctoring
-    useWindowResizeProctoring({
-        onResize: (width, height) => {
-            alert(`Window resized to ${width}x${height}. This may be considered cheating.`);
-        },
-    });
+    const { isResized } = useWindowResizeProctoring({ threshold: 100 });
+    if (isResized) {
+        window.location.href = '/';
+    }
 
     // Clipboard Proctoring
     useClipboardProctoring();
@@ -51,7 +43,10 @@ const Test = () => {
     useRightClickProctoring();
 
     // External Screen Proctoring
-    useExternalScreenProctoring();
+    const { windowFocused } = useExternalScreenProctoring();
+    if (!windowFocused) {
+        window.location.href = '/';
+    }
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -64,18 +59,13 @@ const Test = () => {
 
     return (
         <div className='flex flex-col my-10 items-center h-screen gap-2'>
-            {
-                warningShown ?
-                    <p className='font-bold text-2xl text-red-500'>Next Tab change will exit the test.</p>
-                    :
-                    <p className='font-bold text-2xl'>Please do not switch tabs during the test.</p>
-            }
+            <p className='font-bold text-2xl'>Please do not switch tabs during the test.</p>
             <p>Tab Changes: {tabChanges}</p>
             <h1 className='text-4xl'>{timer}</h1>
             <input type="text" className='border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
 
             {/* Warning Modal  */}
-            {!isFullScreen && showWarning && (
+            {!isFullScreen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
                         <h2 className="text-2xl font-bold mb-4">Warning</h2>
@@ -88,7 +78,9 @@ const Test = () => {
                                 Continue
                             </button>
                             <button
-                                onClick={onExit}
+                                onClick={() => {
+                                    window.location.href = '/';
+                                }}
                                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                             >
                                 Exit Test
